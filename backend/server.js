@@ -23,4 +23,4 @@ app.get("/", (req, res) => res.send("APPLYTRACK API IS RUNNING"));
 app.get;
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => console.log("SERVER PORT IS RUNNING", PORT));
+app.listen(PORT, () => console.log("SERVER PORT IS RUNNING"));
