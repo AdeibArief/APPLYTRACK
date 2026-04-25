@@ -1,0 +1,122 @@
+APPLYTRACK - BUILD CHECKLIST
+=============================
+
+STEP 1 — BACKEND
+-----------------
+[✔️] mkdir applytrack && cd applytrack
+[✔️] mkdir backend && cd backend
+[✔️] npm init -y
+[✔️] Install dependencies (express, mongoose, bcryptjs, jsonwebtoken, cors, dotenv)
+[✔️] Create folder structure (routes, models, middleware, config)
+[✔️] Create .env (MONGO_URI, JWT_SECRET, PORT, CLIENT_URL)
+[✔️] server.js — Express app setup
+[✔️] config/db.js — MongoDB connection
+[✔️] models/User.js
+[✔️] models/Job.js
+[✔️] middleware/protect.js — JWT auth middleware
+[✔️] routes/auth.js — POST /api/auth/register, POST /api/auth/login
+[✔️] routes/jobs.js — GET, POST, PUT, DELETE /api/jobs
+[✔️] Test all routes in Postman/Thunder Client
+
+STEP 2 — FRONTEND
+------------------
+[✔️] cd .. && npm create vite@latest frontend
+[✔️] Install dependencies (axios, zustand, react-router-dom, tailwindcss, daisyui)
+[✔️] Setup Tailwind + DaisyUI
+[✔️] Create folder structure (pages, components, store, lib)
+[✔️] lib/axios.js — axios instance with baseURL
+[✔️] store/useAuthStore.js — login, register, user state
+[✔️] store/useJobStore.js — jobs CRUD state
+[✔️] pages/Login.jsx
+[✔️] pages/Register.jsx
+[ ] pages/Dashboard.jsx — spreadsheet table
+[ ] components/JobRow.jsx — single editable row
+[ ] components/AddJobModal.jsx — manual add form
+[ ] components/EditJobModal.jsx — edit form
+[ ] App.jsx — routes + protected route
+[ ] Test full flow (register → login → add/edit/delete jobs)
+
+STEP 3 — EXTENSION
+-------------------
+[ ] cd .. && mkdir extension
+[ ] Create manifest.json (Manifest V3)
+[ ] Install React + Vite for popup UI
+[ ] popup/App.jsx — main popup component
+[ ] popup/main.jsx — entry point
+[ ] background.js — service worker
+[ ] Read current tab URL + title using chrome.tabs API
+[ ] Parse company name + job title from page title
+[ ] Read JWT from dashboard site localStorage via content script
+[ ] POST job to backend with JWT
+[ ] Show success / error state in popup
+[ ] Build popup (vite build)
+[ ] Test extension in chrome://extensions (developer mode)
+
+STEP 4 — CONNECT & POLISH
+--------------------------
+[ ] Test extension → backend → dashboard full flow
+[ ] Handle duplicate URL (same job applied twice)
+[ ] Add status filter on dashboard (All / Applied / Saved / Interviewing / Offer / Rejected)
+[ ] Add date sort (newest first)
+[ ] Deploy backend to Render
+[ ] Deploy frontend to Vercel
+[ ] Update extension manifest with production API URL
+[ ] Final test on LinkedIn, Indeed, any job site
+
+
+
+
+applytrack/
+├── extension/          ← Chrome extension (Manifest V3)
+│   ├── manifest.json
+│   ├── content/        ← content scripts per site
+│   ├── background.js   ← service worker (handles auth token + API calls)
+│   └── popup/          ← small popup UI (optional: login, status)
+│
+├── backend/            ← Express + MongoDB (same as DevLens)
+│   ├── routes/
+│   │   ├── auth.js     ← /api/auth (register, login, google)
+│   │   └── jobs.js     ← /api/jobs (CRUD)
+│   ├── models/
+│   │   ├── User.js
+│   │   └── Job.js
+│   └── middleware/
+│       └── protect.js  ← JWT middleware
+│
+└── frontend/           ← Vite + React + Tailwind + DaisyUI
+    ├── pages/
+    │   ├── Login.jsx
+    │   ├── Register.jsx
+    │   └── Dashboard.jsx   ← the spreadsheet table
+    └── store/
+        └── useJobStore.js  ← Zustand
+
+
+
+backend/
+├── config/
+│   └── db.js
+├── middleware/
+│   └── protect.js
+├── models/
+│   ├── User.js
+│   └── Job.js
+├── routes/
+│   ├── auth.js
+│   └── jobs.js
+├── .env
+└── server.js
+
+
+
+Data:
+{"success":true,"data":{"_id":"69e755a47d8bff7dc62907ac","name":"Test User","email":"test@gmail.com","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTc1NWE0N2Q4YmZmN2RjNjI5MDdhYyIsImlhdCI6MTc3Njc2ODQyMSwiZXhwIjoxNzc5MzYwNDIxfQ.X43nxHgpkGVkQ-9iqQZHGpk5SsmpiWWmCS7RUlKSPrA"}}
+{"success":true,"data":[{"_id":"69e7564e7d8bff7dc62907ad","userId":"69e755a47d8bff7dc62907ac","company":"Google","role":"Frontend Engineer","status":"Applied","source":"LinkedIn","jobUrl":"https://linkedin.com/jobs/123","notes":"","createdAt":"2026-04-21T10:49:50.974Z","updatedAt":"2026-04-21T10:49:50.974Z","__v":0}]}
+
+POST http://localhost:5000/api/auth/register
+Body (JSON):
+{
+  "name": "Test User",
+  "email": "test@gmail.com",
+  "password": "123456"
+}1

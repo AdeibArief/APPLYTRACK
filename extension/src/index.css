@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  --rounded-btn: 0.5rem;
+  --rounded-box: 1rem;
+  --rounded-badge: 1rem;
+}
