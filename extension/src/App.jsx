@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
+import {  BACKEND_URL } from "./config";
 
-const API_URL = "http://localhost:5001";
+const API_URL=BACKEND_URL;
 
 const App = () => {
   const [token, setToken] = useState(null);
