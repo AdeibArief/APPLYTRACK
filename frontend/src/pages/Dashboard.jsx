@@ -71,7 +71,7 @@ const Dashboard = () => {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-wrap gap-3 mb-6">
+            <div className="flex flex-wrap gap-3 mb-6 text-center items-center justify-center">
               {/* Status Filter */}
               <div className="flex gap-2 flex-wrap">
                 {[
