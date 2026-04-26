@@ -14,26 +14,29 @@ const Dashboard = () => {
   const [dateFilter, setDateFilter] = useState("All Time");
   const [editJob, setEditJob] = useState(null);
 
-  const filteredJobs = jobs.filter(job => {
-  // Status filter
-  const statusMatch = statusFilter === "All" ? true : job.status === statusFilter;
+  const filteredJobs = jobs.filter((job) => {
+    // Status filter
+    const statusMatch =
+      statusFilter === "All" ? true : job.status === statusFilter;
 
-  // Date filter
-  const now = new Date();
-  const jobDate = new Date(job.createdAt);
-  let dateMatch = true;
+    // Date filter
+    const now = new Date();
+    const jobDate = new Date(job.createdAt);
+    let dateMatch = true;
 
-  if (dateFilter === "Today") {
-    dateMatch = jobDate.toDateString() === now.toDateString();
-  } else if (dateFilter === "This Week") {
-    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-    dateMatch = jobDate >= weekAgo;
-  } else if (dateFilter === "This Month") {
-    dateMatch = jobDate.getMonth() === now.getMonth() && jobDate.getFullYear() === now.getFullYear();
-  }
+    if (dateFilter === "Today") {
+      dateMatch = jobDate.toDateString() === now.toDateString();
+    } else if (dateFilter === "This Week") {
+      const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      dateMatch = jobDate >= weekAgo;
+    } else if (dateFilter === "This Month") {
+      dateMatch =
+        jobDate.getMonth() === now.getMonth() &&
+        jobDate.getFullYear() === now.getFullYear();
+    }
 
-  return statusMatch && dateMatch;
-});
+    return statusMatch && dateMatch;
+  });
 
   useEffect(() => {
     getAllJobs();
@@ -57,6 +60,41 @@ const Dashboard = () => {
               >
                 Add Job
               </button>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                {/* Status Filter */}
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    "All",
+                    "Applied",
+                    "Saved",
+                    "Interviewing",
+                    "Offer",
+                    "Rejected",
+                  ].map((status) => (
+                    <button
+                      key={status}
+                      className={`btn btn-sm ${statusFilter === status ? "btn-primary" : "btn-outline"}`}
+                      onClick={() => setStatusFilter(status)}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Date Filter */}
+                <select
+                  className="select select-bordered select-sm"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                >
+                  <option value="All Time">All Time</option>
+                  <option value="Today">Today</option>
+                  <option value="This Week">This Week</option>
+                  <option value="This Month">This Month</option>
+                </select>
+              </div>
 
               <a
                 href="https://chrome.google.com/webstore"
