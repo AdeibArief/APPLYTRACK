@@ -60,42 +60,6 @@ const Dashboard = () => {
               >
                 Add Job
               </button>
-
-              {/* Filters */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                {/* Status Filter */}
-                <div className="flex gap-2 flex-wrap">
-                  {[
-                    "All",
-                    "Applied",
-                    "Saved",
-                    "Interviewing",
-                    "Offer",
-                    "Rejected",
-                  ].map((status) => (
-                    <button
-                      key={status}
-                      className={`btn btn-sm ${statusFilter === status ? "btn-primary" : "btn-outline"}`}
-                      onClick={() => setStatusFilter(status)}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Date Filter */}
-                <select
-                  className="select select-bordered select-sm"
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
-                >
-                  <option value="All Time">All Time</option>
-                  <option value="Today">Today</option>
-                  <option value="This Week">This Week</option>
-                  <option value="This Month">This Month</option>
-                </select>
-              </div>
-
               <a
                 href="https://chrome.google.com/webstore"
                 target="_blank"
@@ -105,6 +69,42 @@ const Dashboard = () => {
                 Download Extension
               </a>
             </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              {/* Status Filter */}
+              <div className="flex gap-2 flex-wrap">
+                {[
+                  "All",
+                  "Applied",
+                  "Saved",
+                  "Interviewing",
+                  "Offer",
+                  "Rejected",
+                ].map((status) => (
+                  <button
+                    key={status}
+                    className={`btn btn-sm ${statusFilter === status ? "btn-primary" : "btn-outline"}`}
+                    onClick={() => setStatusFilter(status)}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+
+              {/* Date Filter */}
+              <select
+                className="select select-bordered select-sm"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              >
+                <option value="All Time">All Time</option>
+                <option value="Today">Today</option>
+                <option value="This Week">This Week</option>
+                <option value="This Month">This Month</option>
+              </select>
+            </div>
+
             {showModal && <AddJobModal onClose={() => setShowModal(false)} />}
             <div className="overflow-x-auto w-full rounded-box border border-base-content/20 bg-base-100">
               <table className="table">
