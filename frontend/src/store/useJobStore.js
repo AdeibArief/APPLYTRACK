@@ -10,7 +10,10 @@ const useJobStore = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await api.get("api/jobs/getalljobs");
-      set({ jobs: res.data.data });
+      const sorted = res.data.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+      );
+      set({ jobs: sorted});
     } catch (error) {
       set({ error: error.message });
     } finally {
@@ -55,17 +58,17 @@ const useJobStore = create((set) => ({
     }
   },
 
-  deleteJob:async(id)=>{
-    set({isLoading:true,error:null})
+  deleteJob: async (id) => {
+    set({ isLoading: true, error: null });
     try {
-        await api.delete(`/api/jobs/deletejob/${id}`)
-        set((state)=>({jobs:state.jobs.filter((job)=>job._id!==id)}))
+      await api.delete(`/api/jobs/deletejob/${id}`);
+      set((state) => ({ jobs: state.jobs.filter((job) => job._id !== id) }));
     } catch (error) {
-        set({error:error.message})
-    }finally{
-        set({isLoading:false})
+      set({ error: error.message });
+    } finally {
+      set({ isLoading: false });
     }
-  }
+  },
 }));
 
 export default useJobStore;
