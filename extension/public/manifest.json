@@ -13,7 +13,11 @@
     "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://www.linkedin.com/*",
+    "https://www.indeed.com/*",
+    "https://www.foundit.in/*",
+    "https://wellfound.com/*",
+    "https://in.indeed.com/*"
   ],
   "background": {
     "service_worker": "background.js"
