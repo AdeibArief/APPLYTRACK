@@ -15,6 +15,11 @@ const Dashboard = () => {
   useEffect(() => {
     getAllJobs();
   }, []);
+
+  useEffect(() => {
+  window.addEventListener("focus", getAllJobs);
+  return () => window.removeEventListener("focus", getAllJobs);
+}, []);
   return (
     <div className="flex flex-col max-h-screen justify-center items-center p-10">
       <div className="overflow-x-auto w-full">
