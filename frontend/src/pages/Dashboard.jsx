@@ -10,16 +10,39 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [dateFilter, setDateFilter] = useState("All Time");
   const [editJob, setEditJob] = useState(null);
+
+  const filteredJobs = jobs.filter(job => {
+  // Status filter
+  const statusMatch = statusFilter === "All" ? true : job.status === statusFilter;
+
+  // Date filter
+  const now = new Date();
+  const jobDate = new Date(job.createdAt);
+  let dateMatch = true;
+
+  if (dateFilter === "Today") {
+    dateMatch = jobDate.toDateString() === now.toDateString();
+  } else if (dateFilter === "This Week") {
+    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    dateMatch = jobDate >= weekAgo;
+  } else if (dateFilter === "This Month") {
+    dateMatch = jobDate.getMonth() === now.getMonth() && jobDate.getFullYear() === now.getFullYear();
+  }
+
+  return statusMatch && dateMatch;
+});
 
   useEffect(() => {
     getAllJobs();
   }, []);
 
   useEffect(() => {
-  window.addEventListener("focus", getAllJobs);
-  return () => window.removeEventListener("focus", getAllJobs);
-}, []);
+    window.addEventListener("focus", getAllJobs);
+    return () => window.removeEventListener("focus", getAllJobs);
+  }, []);
   return (
     <div className="flex flex-col max-h-screen justify-center items-center p-10">
       <div className="overflow-x-auto w-full">
@@ -58,7 +81,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="text-center">
-                  {jobs.map((job) => (
+                  {filteredJobs.map((job) => (
                     <tr key={job._id} className="hover:bg-base-200">
                       <td>{job.company}</td>
                       <td>{job.role}</td>
