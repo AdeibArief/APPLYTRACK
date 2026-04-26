@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
-import {  BACKEND_URL } from "./config";
+import { BACKEND_URL } from "./config";
 
-const API_URL=BACKEND_URL;
+const API_URL = BACKEND_URL;
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -73,7 +73,7 @@ const App = () => {
 
         const res = await axios.post(
           `${API_URL}/api/extract`,
-          { pageText },
+          { pageText, url: currentTab.url },
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -128,6 +128,10 @@ const App = () => {
   };
 
   const handleSubmit = async () => {
+    if (!formData.company || !formData.role || !formData.source) {
+      setError("Please fill in company, role and source before saving");
+      return;
+    }
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/jobs/addjob`, formData, {
@@ -260,7 +264,9 @@ const App = () => {
           <button
             className="btn btn-sm btn-primary"
             onClick={() =>
-              chrome.tabs.create({ url: "http://localhost:5173/dashboard" })
+              chrome.tabs.create({
+                url: "https://applytrack-eta.vercel.app/dashboard",
+              })
             }
           >
             Dashboard

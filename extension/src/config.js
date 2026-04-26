@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://applytrack-yhf5.onrender.com/";
+export const BACKEND_URL = "https://applytrack-yhf5.onrender.com";

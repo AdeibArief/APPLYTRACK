@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 export const extractJobInfo = async (req, res) => {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   try {
-    const { pageText } = req.body;
+    const { pageText, url } = req.body;
 
     if (!pageText) {
       return res
@@ -20,7 +20,7 @@ export const extractJobInfo = async (req, res) => {
         },
         {
           role: "user",
-          content: pageText.slice(0, 5000),
+          content: `URL: ${url}\n\n${pageText.slice(0, 5000)}`,
         },
       ],
     });
