@@ -119,36 +119,49 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="text-center">
-                  {filteredJobs.map((job) => (
-                    <tr key={job._id} className="hover:bg-base-200">
-                      <td>{job.company}</td>
-                      <td>{job.role}</td>
-                      <td>{job.status}</td>
-                      <td>{new Date(job.createdAt).toLocaleDateString()}</td>
-                      <td>{job.notes}</td>
-                      <td className="flex gap-2 items-center justify-center">
-                        <button
-                          className="btn btn-sm btn-error"
-                          onClick={() => deleteJob(job._id)}
-                        >
-                          Delete
-                        </button>
-
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={() => setEditJob(job)}
-                        >
-                          Edit
-                        </button>
-                        {editJob && (
-                          <EditJobModal
-                            job={editJob}
-                            onClose={() => setEditJob(null)}
-                          />
-                        )}
+                  {filteredJobs.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="py-20 text-base-content/40 text-lg"
+                      >
+                        {jobs.length === 0
+                          ? "No applications yet. Add your first job above or use the extension!"
+                          : "No applications match your filters."}
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredJobs.map((job) => (
+                      <tr key={job._id} className="hover:bg-base-200">
+                        <td>{job.company}</td>
+                        <td>{job.role}</td>
+                        <td>{job.status}</td>
+                        <td>{new Date(job.createdAt).toLocaleDateString()}</td>
+                        <td>{job.notes}</td>
+                        <td className="flex gap-2 items-center justify-center">
+                          <button
+                            className="btn btn-sm btn-error"
+                            onClick={() => deleteJob(job._id)}
+                          >
+                            Delete
+                          </button>
+
+                          <button
+                            className="btn btn-sm btn-warning"
+                            onClick={() => setEditJob(job)}
+                          >
+                            Edit
+                          </button>
+                          {editJob && (
+                            <EditJobModal
+                              job={editJob}
+                              onClose={() => setEditJob(null)}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
