@@ -6,15 +6,21 @@ import Register from "./pages/Register";
 import useAuthStore from "./store/useAuthStore";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import { useEffect } from "react";
 
 const App = () => {
-  const { token } = useAuthStore();
+  const { token, checkAuth, error } = useAuthStore();
+
+  useEffect(() => {
+    useAuthStore.setState({ error: null });
+    checkAuth();
+  }, []);
   return (
     <div>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={token? <Dashboard/> : <Home />} />
+          <Route path="/" element={token ? <Dashboard /> : <Home />} />
           <Route
             path="/dashboard"
             element={token ? <Dashboard /> : <Navigate to="/login" />}

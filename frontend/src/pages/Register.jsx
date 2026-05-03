@@ -17,9 +17,9 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register(formData.name,formData.email, formData.password);
+    await register(formData.name, formData.email, formData.password);
     if (!error) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   };
 
@@ -32,7 +32,7 @@ const Register = () => {
           </h1>
         </div>
 
-        <form className="form " action='post' onSubmit={handleSubmit}>
+        <form className="form " action="post" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-3">
             <input
               type="text"
@@ -61,7 +61,7 @@ const Register = () => {
               placeholder="Password"
               required
             />
-            <button className="btn btn-primary text-center text-lg " >
+            <button className="btn btn-primary text-center text-lg ">
               Register
             </button>
           </div>

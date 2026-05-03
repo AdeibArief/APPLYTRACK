@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 export const protect = async (req, res, next) => {
   let token;
 
-  if (
+  if(req.cookies.token){
+    token=req.cookies.token
+  }
+  else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {

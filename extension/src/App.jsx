@@ -219,7 +219,7 @@ const App = () => {
   }
 
   return (
-    <div className="w-96 min-h-fit bg-base-100 p-6" data-theme="night">
+    <div className="w-[450px] min-h-fit bg-base-100 p-6" data-theme="night">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">ApplyTrack</h1>
 
@@ -232,6 +232,16 @@ const App = () => {
           </button>
           <button className="btn btn-xs btn-error" onClick={handleLogout}>
             Logout
+          </button>
+          <button
+            className="btn btn-xs btn-primary"
+            onClick={() =>
+              chrome.tabs.create({
+                url: "https://applytrack-eta.vercel.app/dashboard",
+              })
+            }
+          >
+            Dashboard
           </button>
         </div>
       </div>

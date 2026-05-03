@@ -11,11 +11,12 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData.email, formData.password);
     if (!error) {
-      navigate("/");
+      navigate("/",{replace:true});
     }
   };
   return (
