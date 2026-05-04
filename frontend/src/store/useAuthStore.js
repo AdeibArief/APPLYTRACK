@@ -6,6 +6,7 @@ const useAuthStore = create((set) => ({
   token: null,
   isLoading: false,
   error: null,
+  isCheckingAuth:true,
 
   register: async (name, email, password) => {
     set({ isLoading: true, error: null });
@@ -39,9 +40,9 @@ const useAuthStore = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await api.get("/api/auth/getme");
-      set({ user: res.data.data, token: true });
+      set({ user: res.data.data, token: true ,isCheckingAuth:false});
     } catch (error) {
-      set({user:null,token:null});
+      set({user:null,token:null,isCheckingAuth:false});
     } finally {
       set({ isLoading: false });
     }

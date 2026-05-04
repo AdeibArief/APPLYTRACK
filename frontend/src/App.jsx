@@ -9,12 +9,21 @@ import Home from "./pages/Home";
 import { useEffect } from "react";
 
 const App = () => {
-  const { token, checkAuth, error } = useAuthStore();
+  const { token, checkAuth, error, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     useAuthStore.setState({ error: null });
     checkAuth();
   }, []);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
     <div>
       <BrowserRouter>
