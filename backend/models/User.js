@@ -6,6 +6,12 @@ const UserSchema = new mongoose.Schema(
     name: { required: true, type: String, trim: true },
     email: { required: true, type: String, lowercase: true, unique: true },
     password: { required: true, type: String, minlength: 6 },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
   { timestamps: true },
 );
@@ -18,8 +24,7 @@ UserSchema.pre("save", async function () {
     this.password = await bcrypt.hash(this.password, salt);
   } catch (error) {
     throw error;
-    
-}
+  }
 });
 
 UserSchema.methods.matchPassword = async function (password) {

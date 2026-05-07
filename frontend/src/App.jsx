@@ -6,10 +6,13 @@ import Register from "./pages/Register";
 import useAuthStore from "./store/useAuthStore";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import ForgotPassword from "./pages/ForgotPassword";
 import { useEffect } from "react";
+import ResetPassword from "./pages/ResetPassword";
+
 
 const App = () => {
-  const { token, checkAuth, error, isCheckingAuth } = useAuthStore();
+  const { token, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     useAuthStore.setState({ error: null });
@@ -36,6 +39,8 @@ const App = () => {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/resetpassword/:token" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
     </div>

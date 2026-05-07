@@ -11,12 +11,11 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData.email, formData.password);
     if (!error) {
-      navigate("/",{replace:true});
+      navigate("/", { replace: true });
     }
   };
   return (
@@ -66,6 +65,12 @@ const Login = () => {
               >
                 Register
               </a>
+              <p
+                className="text-center text-sm cursor-pointer text-primary mt-2"
+                onClick={() => navigate("/forgotpassword")}
+              >
+                Forgot Password?
+              </p>
             </div>
           </form>
         </div>
