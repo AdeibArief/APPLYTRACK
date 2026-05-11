@@ -1,5 +1,28 @@
 import Jobs from "../models/Job.js";
 
+const parseRelativeDate = (relativeStr) => {
+  const now = new Date();
+  if (!relativeStr) return now;
+  const match = relativeStr.match(/(\d+)\s*(mo|w|d|h)/);
+  if (!match) return now;
+  const num = parseInt(match[1]);
+  const unit = match[2];
+  if (unit === "mo") return new Date(new Date().setMonth(now.getMonth() - num));
+  if (unit === "w")
+    return new Date(new Date().setDate(now.getDate() - num * 7));
+  if (unit === "d") return new Date(new Date().setDate(now.getDate() - num));
+};
+const getSource = (url = "") => {
+  if (url.includes("linkedin.com")) return "LinkedIn";
+  if (url.includes("indeed.com")) return "Indeed";
+  if (url.includes("foundit.in")) return "Foundit";
+  if (url.includes("wellfound.com")) return "Wellfound";
+  if (url.includes("internshala.com")) return "Internshala";
+  return "Other";
+};
+
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const getAllJobs = async (req, res) => {
   try {
     const job = await Jobs.find({ userId: req.user._id });
@@ -80,6 +103,60 @@ export const deleteJob = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Deleted" });
   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const bulkAddJobs = async (req, res) => {
+  try {
+    const { jobs, pageUrl } = req.body;
+
+    if (!jobs || !Array.isArray(jobs) || jobs.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No job provided" });
+    }
+
+    const source = getSource(pageUrl);
+    let imported = 0;
+    let skipped = 0;
+
+    for (const job of jobs) {
+      const { company, role, appliedAt } = job;
+      if (!company || !role) {
+        skipped++;
+        continue;
+      }
+
+      const existing = await Jobs.findOne({
+        userId: req.user._id,
+        company: { $regex: new RegExp(`^${escapeRegex(company)}$`, "i") },
+        role: { $regex: new RegExp(`^${escapeRegex(role)}$`, "i") },
+      });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      const createdAt = parseRelativeDate(appliedAt);
+      await Jobs.create({
+        userId: req.user._id,
+        company,
+        role,
+        status: "Applied",
+        source,
+        jobUrl: "",
+        notes: `Imported from ${source}`,
+        createdAt,
+      });
+
+      imported++;
+    }
+
+    // moved outside the loop
+    res.status(200).json({ success: true, data: { imported, skipped } });
+  } catch (error) {
+    console.log("bulkAddJobs error:", error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 };

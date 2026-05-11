@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 const Login = () => {
   const { login, error } = useAuthStore();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,11 +13,13 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true)
     e.preventDefault();
     await login(formData.email, formData.password);
     if (!error) {
       navigate("/", { replace: true });
     }
+    setLoading(false)
   };
   return (
     <div className="flex flex-col min-h-screen items-center justify-center ">
@@ -50,9 +53,9 @@ const Login = () => {
 
               <button
                 className="btn btn-primary text-center text-lg "
-                onClick={handleSubmit}
+                onClick={handleSubmit} disabled={loading}
               >
-                Login
+                {loading ? <span className="loading loading-spinner loading-sm"></span> : "Login"}
               </button>
             </div>
             <div className="flex flex-col  text-center gap-0">

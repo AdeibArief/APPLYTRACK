@@ -30,6 +30,10 @@ const App = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  const [currentTabUrl, setCurrentTabUrl] = useState("");
+  const [importResult, setImportResult] = useState(null);
+  const [isImporting, setIsImporting] = useState(false);
+
   const [isDark, setIsDark] = useState(
     localStorage.getItem("theme") === "dark",
   );
@@ -41,19 +45,16 @@ const App = () => {
     localStorage.setItem("theme", newTheme);
   };
 
-  useEffect(
-    () =>
-      document.documentElement.setAttribute(
-        "data-theme",
-        localStorage.getItem("theme") || "dark",
-      ),
-    [],
-  );
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      localStorage.getItem("theme") || "dark",
+    );
+  }, []);
+
   useEffect(() => {
     chrome.storage.local.get(["token"], (result) => {
-      if (result.token) {
-        setToken(result.token);
-      }
+      if (result.token) setToken(result.token);
     });
   }, []);
 
@@ -62,8 +63,11 @@ const App = () => {
 
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const currentTab = tabs[0];
-      setFormData((prev) => ({ ...prev, jobUrl: currentTab.url }));
+      const url = currentTab.url || "";
+      setCurrentTabUrl(url);
 
+      // normal single job extract
+      setFormData((prev) => ({ ...prev, jobUrl: url }));
       setIsLoading(true);
       try {
         const [{ result: pageText }] = await chrome.scripting.executeScript({
@@ -73,7 +77,7 @@ const App = () => {
 
         const res = await axios.post(
           `${API_URL}/api/extract`,
-          { pageText, url: currentTab.url },
+          { pageText, url },
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -86,6 +90,51 @@ const App = () => {
       }
     });
   }, [token]);
+
+  const handleBulkImport = async () => {
+    setIsImporting(true);
+    setImportResult(null);
+    setError(null);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      try {
+        const currentTab = tabs[0];
+
+        const [{ result: pageText }] = await chrome.scripting.executeScript({
+          target: { tabId: currentTab.id },
+          func: () => document.body.innerText,
+        });
+
+        // step 1 — extract jobs array from page using Groq
+        const extractRes = await axios.post(
+          `${API_URL}/api/extract/bulk`,
+          { pageText },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        const jobs = extractRes.data.data;
+
+        if (!jobs || jobs.length === 0) {
+          setError("No jobs found on this page.");
+          setIsImporting(false);
+          return;
+        }
+
+        // step 2 — bulk save to DB
+        const importRes = await axios.post(
+          `${API_URL}/api/jobs/bulkimport`,
+          { jobs, pageUrl: currentTabUrl },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        setImportResult(importRes.data.data);
+      } catch (err) {
+        setError("Import failed. Please try again.");
+      } finally {
+        setIsImporting(false);
+      }
+    });
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -220,9 +269,9 @@ const App = () => {
 
   return (
     <div className="w-[450px] min-h-fit bg-base-100 p-6" data-theme="night">
+      {/* header */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">ApplyTrack</h1>
-
         <div className="flex items-center gap-2">
           <button
             onClick={handleThemeToggle}
@@ -232,6 +281,17 @@ const App = () => {
           </button>
           <button className="btn btn-xs btn-error" onClick={handleLogout}>
             Logout
+          </button>
+          <button
+            className="btn btn-xs btn-secondary"
+            onClick={handleBulkImport}
+            disabled={isImporting}
+          >
+            {isImporting ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              "Import"
+            )}
           </button>
           <button
             className="btn btn-xs btn-primary"
@@ -245,6 +305,40 @@ const App = () => {
           </button>
         </div>
       </div>
+
+      {/* import hint */}
+      <p className="text-xs text-base-content/40 text-center mb-3">
+        To import, visit your applied jobs page on LinkedIn, Indeed, etc. then
+        click Import
+      </p>
+      
+      {/* import result toast */}
+      {importResult && (
+        <div className="alert alert-success mb-4 py-2 text-sm flex justify-between">
+          <span>
+            ✓ {importResult.imported} imported, {importResult.skipped} skipped
+          </span>
+          <button
+            className="btn btn-ghost btn-xs"
+            onClick={() => setImportResult(null)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* error toast */}
+      {error && !isLoading && (
+        <div className="alert alert-error mb-4 py-2 text-sm flex justify-between">
+          <span>{error}</span>
+          <button
+            className="btn btn-ghost btn-xs"
+            onClick={() => setError(null)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
@@ -270,7 +364,6 @@ const App = () => {
           >
             Add Another
           </button>
-
           <button
             className="btn btn-sm btn-primary"
             onClick={() =>
@@ -284,7 +377,6 @@ const App = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {error && <p className="text-error text-sm text-center">{error}</p>}
           <input
             type="text"
             placeholder="Company"

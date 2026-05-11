@@ -20,7 +20,7 @@ const JobSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["Saved", "Applied", "Interviewing", "Offer", "Rejected"],
-      default:'Applied'
+      default: "Applied",
     },
     source: {
       type: String,
@@ -28,14 +28,23 @@ const JobSchema = new mongoose.Schema(
     },
     jobUrl: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     notes: {
       type: String,
       default: "",
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  { timestamps: true },
+  { timestamps: false },
 );
 
 const Jobs = mongoose.model("Jobs", JobSchema);
