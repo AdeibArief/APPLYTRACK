@@ -1,16 +1,19 @@
 import Jobs from "../models/Job.js";
 
 const parseRelativeDate = (relativeStr) => {
-  const now = new Date();
-  if (!relativeStr) return now;
+  if (!relativeStr) return new Date();
   const match = relativeStr.match(/(\d+)\s*(mo|w|d|h)/);
-  if (!match) return now;
+  if (!match) return new Date();
   const num = parseInt(match[1]);
   const unit = match[2];
-  if (unit === "mo") return new Date(new Date().setMonth(now.getMonth() - num));
-  if (unit === "w")
-    return new Date(new Date().setDate(now.getDate() - num * 7));
-  if (unit === "d") return new Date(new Date().setDate(now.getDate() - num));
+  const now = new Date();
+  if (unit === "mo") {
+    const d = new Date(now.getFullYear(), now.getMonth() - num, 1);
+    return d;
+  }
+  if (unit === "w") return new Date(now - num * 7 * 24 * 60 * 60 * 1000);
+  if (unit === "d") return new Date(now - num * 24 * 60 * 60 * 1000);
+  return now;
 };
 const getSource = (url = "") => {
   if (url.includes("linkedin.com")) return "LinkedIn";
