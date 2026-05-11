@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [editJob, setEditJob] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("newest");
+  const [search, setSearch] = useState("");
 
   const filteredByDate = jobs.filter((job) => {
     const now = new Date();
@@ -37,7 +38,13 @@ const Dashboard = () => {
     statusFilter === "All" ? true : job.status === statusFilter,
   );
 
-  const sortedJobs = [...filteredJobs].sort((a, b) =>
+  const searchedJobs = filteredJobs.filter(
+    (job) =>
+      job.company.toLowerCase().includes(search.toLowerCase()) ||
+      job.role.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const sortedJobs = [...searchedJobs].sort((a, b) =>
     sortOrder === "newest"
       ? new Date(b.createdAt) - new Date(a.createdAt)
       : new Date(a.createdAt) - new Date(b.createdAt),
@@ -52,7 +59,7 @@ const Dashboard = () => {
     Offer: filteredByDate.filter((j) => j.status === "Offer").length,
     Rejected: filteredByDate.filter((j) => j.status === "Rejected").length,
   };
-  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
+  const totalPages = Math.ceil(searchedJobs.length / JOBS_PER_PAGE);
   const paginatedJobs = sortedJobs.slice(
     (currentPage - 1) * JOBS_PER_PAGE,
     currentPage * JOBS_PER_PAGE,
@@ -98,6 +105,18 @@ const Dashboard = () => {
               >
                 Download Extension
               </a>
+            </div>
+            <div className="flex justify-center mb-4">
+              <input
+                type="text"
+                placeholder="Search by company or role..."
+                className="input input-bordered input-sm w-full max-w-md"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
             </div>
             <p className="text-xs text-base-content/40 text-center mb-3">
               Click a card to filter by status
