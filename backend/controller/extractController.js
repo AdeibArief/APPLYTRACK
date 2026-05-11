@@ -52,7 +52,7 @@ export const bulkExtractJobs = async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `You are a job application history parser. Extract all job applications from the given page text and return ONLY a JSON array with no extra text or markdown. Each item must follow this exact format: {"company": "company name", "role": "job title", "appliedAt": "relative time string e.g. 11mo ago, 2w ago, 3d ago"}. Only include jobs that are clearly visible. If no jobs are found, return an empty array [].`
+          content: `You are a job application history parser. Extract all job applications from the given page text and return ONLY a JSON array with no extra text or markdown. Each item must follow this exact format: {"company": "company name", "role": "job title", "appliedAt": "exact date or relative time exactly as shown on the page e.g. '3 Oct 24', '2w ago', '11mo ago'}. Only include jobs that are clearly visible. If no jobs are found, return an empty array [].`
         },
         {
           role: "user",

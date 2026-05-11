@@ -1,16 +1,18 @@
 import Jobs from "../models/Job.js";
-
 const parseRelativeDate = (relativeStr) => {
   if (!relativeStr) return new Date();
+
+  // handle full date strings like "3 Oct' 24" or "3 Oct 24"
+  const fullDate = new Date(relativeStr.replace(/'/g, ""));
+  if (!isNaN(fullDate.getTime())) return fullDate;
+
+  // handle relative strings like "11mo ago", "2w ago"
   const match = relativeStr.match(/(\d+)\s*(mo|w|d|h)/);
   if (!match) return new Date();
   const num = parseInt(match[1]);
   const unit = match[2];
   const now = new Date();
-  if (unit === "mo") {
-    const d = new Date(now.getFullYear(), now.getMonth() - num, 1);
-    return d;
-  }
+  if (unit === "mo") return new Date(now.getFullYear(), now.getMonth() - num, 1);
   if (unit === "w") return new Date(now - num * 7 * 24 * 60 * 60 * 1000);
   if (unit === "d") return new Date(now - num * 24 * 60 * 60 * 1000);
   return now;
